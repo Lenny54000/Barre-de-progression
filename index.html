@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barre de Progression de Durée</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 600px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        input[type="number"] {
+            padding: 10px;
+            font-size: 1rem;
+            width: 60px;
+        }
+
+        .progress-container {
+            margin-top: 20px;
+            width: 100%;
+            height: 20px;
+            background-color: #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative; /* Permet de positionner le texte absolument */
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: #4CAF50;
+            transition: width 0.01s linear; /* Transition plus rapide pour une mise à jour plus fréquente */
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #333;
+            font-size: 0.8rem;
+            line-height: 20px; /* Assure que le texte est centré verticalement */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Barre de Progression de Durée</h1>
+        <div id="timeSelection">
+            <label for="duration">Choisissez une durée en minutes :</label>
+            <input type="number" id="duration" min="0.1" step="0.1" value="1">
+            <button onclick="startProgress()">Démarrer</button>
+        </div>
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar" id="progressBar"></div>
+            <div class="progress-text" id="progressText"></div>
+        </div>
+    </div>
+
+    <script>
+        function startProgress() {
+            const durationMinutes = parseFloat(document.getElementById('duration').value);
+            const durationSeconds = durationMinutes * 60; // Conversion en secondes
+            const progressContainer = document.getElementById('progressContainer');
+            const timeSelection = document.getElementById('timeSelection');
+
+            if (isNaN(durationMinutes) || durationMinutes <= 0) {
+                alert('Veuillez entrer une durée valide en minutes.');
+                return;
+            }
+
+            // Afficher la barre de progression et cacher la sélection de temps
+            progressContainer.style.display = 'block';
+            timeSelection.style.display = 'none';
+
+            let progress = 0;
+            const updateInterval = 10; // Mise à jour toutes les 10 millisecondes (centième de seconde)
+
+            const interval = setInterval(() => {
+                progress += (updateInterval / 1000) / durationSeconds * 100; // Calcul du pourcentage de progression par intervalle
+                document.getElementById('progressBar').style.width = progress + '%';
+                document.getElementById('progressText').textContent = `${Math.round(progress)}%`;
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    document.getElementById('progressBar').style.backgroundColor = '#4CAF50';
+                    document.getElementById('progressBar').textContent = 'Terminé!'; // Message de terminé après la progression
+                    document.getElementById('progressText').textContent = ''; // Effacer le texte de pourcentage
+                }
+            }, updateInterval);
+        }
+    </script>
+</body>
+</html>
